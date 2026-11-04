@@ -103,6 +103,14 @@ Feature: eyaml editing
     And the output should match /new_key2: DEC::PKCS7\[new value two\]\!/
     And the output should match /multi_encryption: DEC::PLAINTEXT\[jammy\]\! DEC::PKCS7\[dodger\]!/
 
+  Scenario: editing a eyaml file with an empty encrypted value should keep all values
+    Given my EDITOR is set to "sed -i.bak s/keep/kept/"
+    When I run `bash -c 'cp test_empty_value.eyaml test_empty_value_edit.eyaml'`
+    When I run `eyaml edit test_empty_value_edit.eyaml`
+    When I run `eyaml decrypt -e test_empty_value_edit.eyaml`
+    Then the output should match /^empty_value: DEC::PKCS7\[\]\!$/
+    And the output should match /^next_value: DEC::PKCS7\[kept me\]\!$/
+
   Scenario: not editing a file should result in an untouched file
     Given my EDITOR is set to "/usr/bin/env true"
     When I run `bash -c 'cp test_edit.yaml test_edit.eyaml'`

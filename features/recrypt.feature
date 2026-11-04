@@ -42,3 +42,9 @@ Feature: Recrypt
     Then the exit status should be 0
     And I run `eyaml decrypt -e test_input.eyaml`
     Then the output should match /encrypted_string: DEC::PKCS7\[planet of the apes\]\!/
+
+  Scenario: Recrypt an eyaml file with an empty encrypted value using the eyaml tool
+    When I run `eyaml recrypt test_empty_value.eyaml`
+    And I run `eyaml decrypt -e test_empty_value.eyaml`
+    Then the output should match /^empty_value: DEC::PKCS7\[\]\!$/
+    And the output should match /^next_value: DEC::PKCS7\[keep me\]\!$/
