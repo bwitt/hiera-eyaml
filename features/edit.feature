@@ -116,6 +116,30 @@ Feature: eyaml editing
     When I run `eyaml edit test_edit.eyaml`
     Then the stderr should contain "No changes detected"
 
+  Scenario: a duplicate DEC(ID) should allow returning to the editor
+    Given my EDITOR is set to "./duplicate_dec_id_once.sh"
+    When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
+    When I run `eyaml edit test_input.eyaml` interactively
+    And I wait for stderr to contain "Return to the editor to try again? (y/N): "
+    And I type "y"
+    And I stop the command started last
+    Then the exit status should be 0
+    When I run `eyaml decrypt -e test_input.eyaml`
+    Then the output should match /\s+key6: DEC::PKCS7\[value7\]\!/
+    And the output should not contain "duplicate_key"
+
+  Scenario: a duplicate DEC(ID) should allow aborting the edit
+    Given my EDITOR is set to "./duplicate_dec_id_once.sh"
+    When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
+    When I run `eyaml edit test_input.eyaml` interactively
+    And I wait for stderr to contain "Return to the editor to try again? (y/N): "
+    And I type "n"
+    And I stop the command started last
+    Then the exit status should be 1
+    And the stderr should contain "A duplicate DEC(ID) was found"
+    When I run `diff test_input.yaml test_input.eyaml`
+    Then the exit status should be 0
+
   Scenario: not modifying the plaintext should result in no encryption
     Given my EDITOR is set to "sed -i.bak s/simple_array/test_array/g"
     When I run `bash -c 'cp test_input.yaml test_input.eyaml'`

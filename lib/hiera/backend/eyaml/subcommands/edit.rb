@@ -138,7 +138,7 @@ class Hiera
               end
             rescue RecoverableError => e
               LoggingHelper.info e
-              raise e unless agree 'Return to the editor to try again?'
+              raise e unless HighlineHelper.confirm? 'Return to the editor to try again?'
 
               retry
             ensure
