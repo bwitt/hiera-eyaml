@@ -51,7 +51,7 @@ class Hiera
             next unless config_file and File.file? config_file
 
             begin
-              yaml_contents = YAML.load_file(config_file)
+              yaml_contents = YAML.load_file(config_file) || {}
               config[:options].merge! yaml_contents
               config[:sources].push(config_file)
             rescue StandardError

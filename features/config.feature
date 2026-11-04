@@ -19,3 +19,9 @@ Feature: config file overrides
     Then the output should match /pkcs7_public_key\s+=\s+\(String\)\s+config_file_pub_key\.pkcs7\.pem/
     And the output should match /encrypt_method\s+=\s+\(String\)\s+plaintext/
     And the output should match /plaintext_diagnostic_message\s+=\s+\(String\)\s+config_file_success/
+
+  Scenario: ignores an empty configuration file
+    Given my EYAML_CONFIG is set to "empty_config_file.yaml"
+    When I run `eyaml version -t`
+    Then the exit status should be 0
+    And the output should match /encrypt_method\s+=\s+\(String\)\s+pkcs7/
