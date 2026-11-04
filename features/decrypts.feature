@@ -42,3 +42,15 @@ Feature: eyaml decrypting
     And I type "ENC[MIIBiQYJKoZIhvcNAQcDoIIBejCCAXYCAQAxggEhMIIBHQIBADAFMAACAQAwDQYJKoZIhvcNAQEBBQAEggEAJsIbL+DE4b5mbT4ozzsGximhweXkJakBXRNqi/TOBV5RnMjlAhik2NQGyZdrg4fmQynyQvI7lKPos5bmqT6Ltk0XxfL0l1x8MIdVLDu7JG72a+5bbU7EK/PlhwaeJ0QpnA0M34koNykSmcvdVUoIDag71lqw4Hmk8JQuXmo95gP0sXHvlahgxR522Z8MTEitfimtZPnHJVMjQEnBHIwXLkEfqUHH3RciED3AkeU+En63Ou7Nq1SqoC4ln0oL1L2gRqsyEKWF/cigcZfAggh9rva6wlthh+Fj7yJy7ALVG/AXwrF1sJfTR31+RMbzPbgOHXES8P4yQvQnx6LNUSKAgDBMBgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBCSuNScp5k8F0RKt63fkoPrgCBYbnl44Wdv5mtaJmJcc0WIUcLTpixl1IY2uQ7IiI358w==]"
     And I close the stdin stream
     Then the output should match /^one flew over the cuckoos nest$/
+
+  Scenario: decrypt with the private key from an environment variable
+    Given I load the keypair into envvars
+    When I run `eyaml decrypt -f test_input.encrypted.txt --pkcs7-private-key-env-var EYAML_PRIVATE_KEY`
+    Then the output should match /^danger will robinson$/
+    And the stderr should not contain "specified, using private_key_env_var"
+
+  Scenario: decrypt with both a private key file and environment variable
+    Given I load the keypair into envvars
+    When I run `eyaml decrypt -f test_input.encrypted.txt --pkcs7-private-key-env-var EYAML_PRIVATE_KEY --pkcs7-private-key does_not_exist.pem`
+    Then the output should match /^danger will robinson$/
+    And the stderr should contain "both private_key and private_key_env_var specified, using private_key_env_var"

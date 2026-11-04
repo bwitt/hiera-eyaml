@@ -101,7 +101,8 @@ class Hiera
             opt_key_env_var = option(optname_env_var.to_sym)
             b64_opt_key_env_var = option(b64_optname_env_var.to_sym)
 
-            if opt_key and opt_key_env_var
+            # the eyaml CLI always sets a default key file, so only warn if it was changed
+            if opt_key and opt_key_env_var and opt_key != options[optname_key.to_sym][:default]
               warn "both #{optname_key} and #{optname_env_var} specified, using #{optname_env_var}"
             end
 
