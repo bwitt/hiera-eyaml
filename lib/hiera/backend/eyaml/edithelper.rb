@@ -37,7 +37,7 @@ class Hiera
 
         def self.secure_file_delete(args)
           file = File.open(args[:file], 'r+')
-          num_bytes = args[:num_bytes]
+          num_bytes = file.size
           [0xff, 0x55, 0xaa, 0x00].each do |byte|
             file.seek(0, IO::SEEK_SET)
             num_bytes.times { file.print(byte.chr) }

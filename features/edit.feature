@@ -36,6 +36,13 @@ Feature: eyaml editing
     When I run `eyaml edit -v test_input.eyaml`
     Then the stderr should contain "Wrote temporary file"
 
+  Scenario: editing a eyaml file should overwrite the whole temporary file before deleting it
+    Given my EDITOR is set to "./link_tempfile.sh"
+    When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
+    When I run `eyaml edit test_input.eyaml`
+    Then the file "linked_tempfile.yaml" should not contain "planet of the apes"
+    And the file "linked_tempfile.yaml" should not contain "value6"
+
   Scenario: decrypting a eyaml file should add a preamble
     Given my EDITOR is set to "/bin/cat"
     When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
