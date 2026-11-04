@@ -1,0 +1,38 @@
+---
+version: 5
+
+defaults:
+  datadir: data
+
+hierarchy:
+  - name: 'Secrets with keys from files'
+    lookup_key: eyaml_lookup_key
+    path: 'secrets.eyaml'
+    options:
+      pkcs7_private_key: ./keys/private_key.pkcs7.pem
+      pkcs7_public_key: ./keys/public_key.pkcs7.pem
+
+  - name: 'Secrets with keys from environment variables'
+    lookup_key: eyaml_lookup_key
+    path: 'envvar_secrets.eyaml'
+    options:
+      pkcs7_private_key_env_var: EYAML_PRIVATE_KEY
+      pkcs7_public_key_env_var: EYAML_PUBLIC_KEY
+
+  - name: 'Secrets with keys that do not exist'
+    lookup_key: eyaml_lookup_key
+    path: 'missing_keys.eyaml'
+    options:
+      pkcs7_private_key: ./missing/private_key.pkcs7.pem
+      pkcs7_public_key: ./missing/public_key.pkcs7.pem
+
+  - name: 'Secrets with keys created by eyaml createkeys'
+    lookup_key: eyaml_lookup_key
+    path: 'new_keys.eyaml'
+    options:
+      pkcs7_private_key: ./new_keys/private_key.pkcs7.pem
+      pkcs7_public_key: ./new_keys/public_key.pkcs7.pem
+
+  - name: 'Common'
+    data_hash: yaml_data
+    path: 'common.yaml'

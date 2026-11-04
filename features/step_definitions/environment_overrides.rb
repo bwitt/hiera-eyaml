@@ -19,3 +19,10 @@ Given(/^my PATH contains "(.*?)"$/) do |path_value|
   ENV['PATH'] = paths.join(File::PATH_SEPARATOR)
   prepend_environment_variable 'PATH', abspath + File::PATH_SEPARATOR
 end
+
+Given(/^I load the keypair into base64 envvars$/) do
+  require 'base64'
+  keys_dir = File.join(aruba.config.root_directory, 'features', 'sandbox', 'keys')
+  set_environment_variable 'EYAML_B64_PUBLIC_KEY', Base64.strict_encode64(File.read(File.join(keys_dir, 'public_key.pkcs7.pem')))
+  set_environment_variable 'EYAML_B64_PRIVATE_KEY', Base64.strict_encode64(File.read(File.join(keys_dir, 'private_key.pkcs7.pem')))
+end
