@@ -142,9 +142,11 @@ class Hiera
 
               retry
             ensure
-              EditHelper.secure_file_delete file: decrypted_file,
-                                            num_bytes: [edited_file.length,
-                                                        decrypted_input.length,].max
+              if decrypted_file && File.file?(decrypted_file)
+                EditHelper.secure_file_delete file: decrypted_file,
+                                              num_bytes: [edited_file.to_s.length,
+                                                          decrypted_input.length,].max
+              end
             end
 
             nil

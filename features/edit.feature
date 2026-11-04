@@ -233,3 +233,10 @@ Feature: eyaml editing
     When I run `eyaml edit test_input.eyaml`
     Then the stderr should contain "Editor did not exit successfully"
     Then the stderr should not contain "Wrote temporary file"
+
+  Scenario: EDITOR removes the temporary file
+    Given my EDITOR is set to "rm -f"
+    When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
+    When I run `eyaml edit test_input.eyaml`
+    Then the exit status should be 1
+    And the stderr should contain "File was moved by editor"
