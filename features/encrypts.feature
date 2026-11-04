@@ -39,3 +39,9 @@ Feature: eyaml encrypting
   Scenario: encrypt as block with a label
     When I run `eyaml encrypt -o block -s secret_thing -l db-password`
     Then the output should match /db-password: \>\s*ENC\[PKCS7,(.*?)\]$/
+
+  Scenario: encrypt with a private key instead of a public key
+    When I run `eyaml encrypt -o string -s some_string --pkcs7-public-key keys/private_key.pkcs7.pem`
+    Then the exit status should be 1
+    And the stderr should contain "invalid public key format"
+    And the stderr should not contain "PRIVATE KEY"
