@@ -117,6 +117,13 @@ class Hiera
                         "A duplicate DEC(ID) was found so I don't know how to proceed. This is probably because you copy and pasted a value - if you do this please delete the ID and parentheses"
                 end
 
+                # check that the tokens refer to values from the source file
+                unknown_ids = used_ids.reject { |id| tokens && tokens[id].is_a?(Parser::EncToken) }
+                unless unknown_ids.empty?
+                  raise RecoverableError,
+                        "An unknown DEC(ID) was found so I don't know how to proceed. This is probably because you changed the ID - to add a new value please delete the ID and parentheses"
+                end
+
                 # replace untouched values with the source values
                 edited_denoised_tokens = edited_tokens.map do |token|
                   if token.class.name =~ /::EncToken$/ && !token.id.nil?

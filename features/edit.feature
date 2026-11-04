@@ -165,6 +165,28 @@ Feature: eyaml editing
     And the output should not match /DEC\(\d+\)/
     And the output should match /encrypted_string: ENC\[PKCS7,/
 
+  Scenario: changing a DEC(ID) should be detected
+    Given my EDITOR is set to "./change_dec_id.sh"
+    When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
+    When I run `eyaml edit test_input.eyaml` interactively
+    And I close the stdin stream
+    And I stop the command started last
+    Then the exit status should be 1
+    And the stderr should contain "An unknown DEC(ID) was found"
+    When I run `diff test_input.yaml test_input.eyaml`
+    Then the exit status should be 0
+
+  Scenario: no-decrypt mode should detect a DEC(ID) in new values
+    Given my EDITOR is set to "./append.sh test_new_values_with_id.yaml"
+    When I run `bash -c 'cp test_edit.yaml test_edit.eyaml'`
+    When I run `eyaml edit -d test_edit.eyaml` interactively
+    And I close the stdin stream
+    And I stop the command started last
+    Then the exit status should be 1
+    And the stderr should contain "An unknown DEC(ID) was found"
+    When I run `diff test_edit.yaml test_edit.eyaml`
+    Then the exit status should be 0
+
   Scenario: EDITOR has a space in it that isn't quoted or escaped
     Given my EDITOR is set to "./path/spaced editor.sh"
     When I run `bash -c 'cp test_input.yaml test_input.eyaml'`
